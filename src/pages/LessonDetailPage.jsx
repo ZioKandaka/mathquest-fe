@@ -7,6 +7,7 @@ import { useResultsStore } from "../state/results";
 import getErrorMessage from "../utils/getErrorMessage";
 import LessonOptionButton from "../components/buttons/Lesson.option.button";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EMPTY_OBJ = Object.freeze({});
 
@@ -28,6 +29,7 @@ export default function LessonDetailPage() {
   const setLastResult = useResultsStore((s) => s.setLastResult);
 
   const [submitting, setSubmitting] = useState(false);
+  const qc = useQueryClient();
 
   if (isLoading) return <p>Loading…</p>;
   if (error || !lesson)
@@ -47,7 +49,13 @@ export default function LessonDetailPage() {
       const answers = getAnswersArr(id, problemIds);
       const payload = { user_id, attempt_id: uuid(), answers };
 
-      const res = await submit.mutateAsync(payload); // assumes useSubmit expects payload
+      const res = await submit.mutateAsync(payload);
+
+      qc.invalidateQueries({ queryKey: ["lessons", user_id] });
+      qc.invalidateQueries({ queryKey: ["profile", user_id] });
+      qc.refetchQueries({ queryKey: ["lessons", user_id] });
+      qc.refetchQueries({ queryKey: ["profile", user_id] });
+
       setLastResult(id, res);
       clearLesson(id);
       nav(`/lessons/${id}/result`);

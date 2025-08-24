@@ -4,6 +4,7 @@ import Layout from './components/Layout.jsx';
 import LessonsPage from './pages/LessonsPage.jsx';
 import LessonDetailPage from './pages/LessonDetailPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import ProgressResultPage from './pages/ProgressResultPage.jsx';
 
 const router = createBrowserRouter([
     {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
             { path: '/', element: <LessonsPage /> },
             { path: '/lessons/:lesson_id', element: <LessonDetailPage /> },
             { path: '/profile', element: <ProfilePage /> },
+            { path: '/lessons/:lesson_id/result', element: <ProgressResultPage /> },
         ],
     },
 ]);

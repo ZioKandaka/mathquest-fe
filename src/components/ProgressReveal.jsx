@@ -25,7 +25,7 @@ export default function ProgressReveal({ correct, total, xp, streak }) {
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
             className="h-full bg-blue-600"
-            transition={{ type: "spring", stiffness: 120 }}
+            transition={{ type: "spring", stiffness: 15 }}
           />
         </div>
         <div className="text-right text-sm mt-1">{pct}%</div>

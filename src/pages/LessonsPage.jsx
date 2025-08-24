@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLessons } from "../api/hooks.js";
 import { useUserStore } from "../state/user";
-import LessonCard from "../components/LessonCard.jsx";
+import LessonCard from "../components/cards/Lesson.card.jsx";
 
 export default function LessonsPage() {
   const user_id = useUserStore((s) => s.user_id);

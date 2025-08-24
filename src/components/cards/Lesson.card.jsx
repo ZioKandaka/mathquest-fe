@@ -24,7 +24,7 @@ export default function LessonCard({ lesson }) {
           </Link>
         )}
         {pct === 100 && (
-          <Link to={`/lessons/${lesson.lesson_id}`} className="text-green-600">
+          <Link to={`/`} className="text-green-600">
             Review
           </Link>
         )}

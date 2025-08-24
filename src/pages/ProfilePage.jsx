@@ -72,12 +72,14 @@ export default function ProfilePage() {
                     {dt ? dt.toLocaleString() : "—"}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Link
-                      to={`/lessons/${row.lesson_id}/result`}
-                      className="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-50"
-                    >
-                      Open
-                    </Link>
+                    {pct < 100 ? (
+                      <Link
+                        to={`/lessons/${row.lesson_id}`}
+                        className="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-50"
+                      >
+                        {pct === 0 ? "Start" : "Retry"}
+                      </Link>
+                    ) : null}
                   </td>
                 </tr>
               );

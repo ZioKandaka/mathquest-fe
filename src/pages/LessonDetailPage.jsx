@@ -1,3 +1,4 @@
+// src/pages/LessonDetailPage.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useLesson, useSubmit } from "../api/hooks";
 import { v4 as uuid } from "uuid";
@@ -6,8 +7,9 @@ import { useSubmissionStore } from "../state/submission";
 import { useResultsStore } from "../state/results";
 import getErrorMessage from "../utils/getErrorMessage";
 import LessonOptionButton from "../components/buttons/Lesson.option.button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import ErrorModal from "../components/modals/Error.modal";
 
 const EMPTY_OBJ = Object.freeze({});
 
@@ -15,7 +17,7 @@ export default function LessonDetailPage() {
   const { lesson_id } = useParams();
   const id = Number(lesson_id);
 
-  // hooks – always before any early returns
+  // stores / hooks (all at top)
   const user_id = useUserStore((s) => s.user_id);
   const setAnswer = useSubmissionStore((s) => s.setAnswer);
   const getAnswersArr = useSubmissionStore((s) => s.getAnswersArray);
@@ -27,9 +29,25 @@ export default function LessonDetailPage() {
   const submit = useSubmit(id);
   const nav = useNavigate();
   const setLastResult = useResultsStore((s) => s.setLastResult);
+  const qc = useQueryClient();
 
   const [submitting, setSubmitting] = useState(false);
-  const qc = useQueryClient();
+
+  // modal error state
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (submit.isError) {
+      setErrorMsg(getErrorMessage(submit.error));
+      setErrorOpen(true);
+    }
+  }, [submit.isError, submit.error]);
+
+  const closeError = () => {
+    setErrorOpen(false);
+    submit.reset();
+  };
 
   if (isLoading) return <p>Loading…</p>;
   if (error || !lesson)
@@ -43,6 +61,26 @@ export default function LessonDetailPage() {
     });
 
   const onSubmit = async () => {
+    const missingNumbers = [];
+    lesson.Problems.forEach((p, i) => {
+      const ans = answersMap[p.problem_id];
+      const mcMissing =
+        p.type === "multiple_choice" && !ans?.selected_option_id;
+      const inMissing =
+        p.type === "input" && !(ans?.input_value ?? "").toString().trim();
+      if (mcMissing || inMissing) missingNumbers.push(i + 1); // human-friendly 1-based index
+    });
+
+    if (missingNumbers.length) {
+      setErrorMsg(
+        `Please complete all questions before submitting. Unanswered: ${missingNumbers.join(
+          ", "
+        )}.`
+      );
+      setErrorOpen(true);
+      return; 
+    }
+
     try {
       setSubmitting(true);
       const problemIds = lesson.Problems.map((p) => p.problem_id);
@@ -110,9 +148,14 @@ export default function LessonDetailPage() {
         {submit.isPending || submitting ? "Submitting…" : "Submit"}
       </button>
 
-      {submit.isError && (
-        <p className="text-red-600 mt-2">{getErrorMessage(submit.error)}</p>
-      )}
+      {/* Error popup */}
+      <ErrorModal
+        open={errorOpen}
+        title="Submission failed"
+        onClose={closeError}
+      >
+        {errorMsg || "Something went wrong. Please try again."}
+      </ErrorModal>
     </div>
   );
 }

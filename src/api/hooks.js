@@ -13,19 +13,27 @@ export function useLessons(user_id) {
 }
 
 export function useLesson(lesson_id) {
-    return useQuery({
-        queryKey: ['lesson', lesson_id],
-        queryFn: async () => (await api.get(`/lessons/${lesson_id}`)).data,
-    });
+  return useQuery({
+    queryKey: ['lesson', lesson_id],
+    queryFn: async () => (await api.get(`/lessons/${lesson_id}`)).data,
+  });
 }
 export function useSubmit(lesson_id) {
-    return useMutation({
-        mutationFn: async (payload) => (await api.post(`/lessons/${lesson_id}/submit`, payload)).data,
-    });
+  return useMutation({
+    mutationFn: async (payload) => (await api.post(`/lessons/${lesson_id}/submit`, payload)).data,
+  });
 }
 export function useProfile(user_id) {
-    return useQuery({
-        queryKey: ['profile', user_id],
-        queryFn: async () => (await api.get('/profile', { params: { user_id } })).data,
-    });
+  return useQuery({
+    queryKey: ['profile', user_id],
+    queryFn: async () => (await api.get('/profile', { params: { user_id } })).data,
+  });
+}
+
+export function useUsers() {
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: async () => (await api.get('/users')).data,
+    staleTime: Infinity, // user list rarely changes
+  });
 }

@@ -16,7 +16,7 @@ A web application where user, mostly student, can learn about mathematic
 - Run "npm i" on terminal
 - Open "src/api/client.js" then make sure the baseURL is the URL of the backend. The default is 'http://localhost:3000'
 - Run "npm run dev" on terminal
-- Open "http://localhost:5173/" in your browser
+- Open "http://localhost:5173/" (or "http://localhost:<YOUR_PORT>/") in your browser
 
 # Troubleshoot
 

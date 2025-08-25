@@ -13,6 +13,7 @@ A web application where user, mostly student, can learn about mathematic
 
 - Clone this repository to your machine
 - Open terminal (bash) in root folder
+- Use or switch to NodeJS version 22.12.0 (recommended)
 - Run "npm i" on terminal
 - Open "src/api/client.js" then make sure the baseURL is the URL of the backend. The default is 'http://localhost:3000'
 - Run "npm run dev" on terminal
